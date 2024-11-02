@@ -15,8 +15,8 @@ func init() {
 var (
 	initCmd = &cobra.Command{
 		Use:   "init",
-		Args:  cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs),
-		Short: "templatename projectname",
+		Args:  cobra.MatchAll(cobra.ExactArgs(1)),
+		Short: "init project from template",
 		Run: func(cmd *cobra.Command, args []string) {
 			initCmdBody(args[0])
 		},
@@ -31,5 +31,5 @@ func initCmdBody(templateName string) {
 	logger.SetReportTimestamp(false)
 	logger.SetReportCaller(false)
 
-	internal.InitProject(templateName, templateDir, logger)
+	internal.InitProject(templateName, homeDir, logger)
 }

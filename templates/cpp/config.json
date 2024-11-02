@@ -1,0 +1,21 @@
+{
+    "main":{
+        "build_cmd":{
+            "cmd":  "g++",
+            "args": "main.cpp -fsanitize=address,undefined -fno-sanitize-recover=all -std=c++17 -O2 -Wall -Werror -Wsign-compare -o debug.o"
+        },
+        "run_cmd": {
+            "cmd": "./debug.o"
+        }
+    },
+    "light": {
+        "run_cmd": {
+            "cmd":  "python3",
+            "args": "base_solver.py"
+        }
+    },
+    "input_generator": {
+        "cmd":  "python3",
+        "args": "generator.py {seed}"
+    }
+}

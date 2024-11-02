@@ -25,3 +25,5 @@ templates_wip
 
 # env file
 .env
+
+.vscode

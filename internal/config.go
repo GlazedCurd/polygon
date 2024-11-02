@@ -1,14 +1,19 @@
 package internal
 
-type execConfig struct {
-	BuildCmd         string `json:"build_cmd"`
-	RunCmd           string `json:"run_cmd,omitempty"`
-	WorkingDirectory string `json:"working_directory,omitempty"`
+type CommandCfg struct {
+	Cmd  string `mapstructure:"cmd" json:"cmd"`
+	Args string `mapstructure:"args" json:"args"`
 }
 
-type projectConfig struct {
-	Main           execConfig            `json:"main"`
-	Light          *execConfig           `json:"light"`
-	InputGenerator string                `json:"input_generator"`
-	Custom         map[string]execConfig `json:"custom"`
+type ExecConfig struct {
+	BuildCmd         CommandCfg `mapstructure:"build_cmd" json:"build_cmd"`
+	RunCmd           CommandCfg `mapstructure:"run_cmd" json:"run_cmd,omitempty"`
+	WorkingDirectory string     `mapstructure:"working_directory" json:"working_directory,omitempty"`
+}
+
+type ProjectConfig struct {
+	Main           ExecConfig            `mapstructure:"main" json:"main"`
+	Light          *ExecConfig           `mapstructure:"light" json:"light"`
+	InputGenerator CommandCfg            `mapstructure:"input_generator" json:"input_generator"`
+	Custom         map[string]ExecConfig `mapstructure:"custom" json:"custom"`
 }
