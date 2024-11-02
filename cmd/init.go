@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"fmt"
+	"os"
 
 	"github.com/GlazedCurd/polygon/internal"
+	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
 )
 
@@ -15,14 +16,20 @@ var (
 	initCmd = &cobra.Command{
 		Use:   "init",
 		Args:  cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs),
-		Short: "...",
+		Short: "templatename projectname",
 		Run: func(cmd *cobra.Command, args []string) {
-
+			initCmdBody(args[0])
 		},
 	}
 )
 
 func initCmdBody(templateName string) {
-	fmt.Println("Initializing project")
-	internal.InitProject(cfgFile, templateName, templateDir, verbose)
+	logger := log.New(os.Stderr)
+	if verbose {
+		logger.SetLevel(log.DebugLevel)
+	}
+	logger.SetReportTimestamp(false)
+	logger.SetReportCaller(false)
+
+	internal.InitProject(templateName, templateDir, logger)
 }
