@@ -1,0 +1,21 @@
+{
+    "main":{
+        "build_cmd":{
+            "cmd":  "go",
+            "args": "build -o debug.o"
+        },
+        "run_cmd": {
+            "cmd": "./debug.o"
+        }
+    },
+    "light": {
+        "run_cmd": {
+            "cmd":  "python3",
+            "args": "base_solver.py"
+        }
+    },
+    "input_generator": {
+        "cmd":  "python3",
+        "args": "generator.py {seed}"
+    }
+}
