@@ -88,10 +88,17 @@ func (pj *Project) Check(solution string, testsuite string) error {
 			continue
 		}
 		defer inpFile.Close()
+
+		inpFileContent, err := io.ReadAll(inpFile)
+		if err != nil {
+			pj.logger.Errorf("Read all input file failed: %s", err)
+			return nil
+		}
+
 		pj.logger.Debugf("Starting Main Command")
 		var outBld strings.Builder
 
-		err = runCmd(&execConfig.RunCmd, inpFile, &outBld, os.Stderr, pj.logger)
+		err = runCmd(&execConfig.RunCmd, strings.NewReader(string(inpFileContent)), &outBld, os.Stderr, pj.logger)
 		if err != nil {
 			pj.logger.Errorf("Main Command failed: %s", err)
 			return nil
@@ -129,11 +136,12 @@ func (pj *Project) Check(solution string, testsuite string) error {
 		if expectedStr != outStr {
 			pj.logger.Infof(coloredFailed())
 			// TODO: add report on failed
-			pj.logger.Infof("Expected: \"%s\"", expectedStr)
-			pj.logger.Infof("Got: \"%s\"", outStr)
+			pj.logger.Infof("Input: \n%s\n", string(inpFileContent))
+			pj.logger.Infof("Expected: \n%s\n", expectedStr)
+			pj.logger.Infof("Got:\n%s\n\n", outStr)
 			dmp := diffmatchpatch.New()
 			diffs := dmp.DiffMain(expectedStr, outStr, false)
-			pj.logger.Infof("Diff: %s", dmp.DiffPrettyText(diffs))
+			pj.logger.Infof("Diff:\n %s \n \n", dmp.DiffPrettyText(diffs))
 		} else {
 			pj.logger.Info(coloredOk())
 		}
