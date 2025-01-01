@@ -15,8 +15,8 @@ import (
 
 const (
 	TestInputFileSuffix      = "_in"
-	TestOutputFileSuffix     = "_out"
-	TestExpectedFileSuffix   = "_exp"
+	TestOutputFileSuffix     = "_real"
+	TestExpectedFileSuffix   = "_out"
 	TestDebugFileSuffix      = "_debug"
 	TestCasesDirectorySuffix = "_cases"
 
@@ -121,7 +121,7 @@ func (pj *Project) Check(solution string, testsuite string, filter string) error
 		}
 		pj.logger.Debugf("Main command done successfully")
 
-		expectedFileName := path.Join(testsuiteDirName, testname+TestOutputFileSuffix)
+		expectedFileName := path.Join(testsuiteDirName, testname+TestExpectedFileSuffix)
 		expectedFile, err := os.Open(expectedFileName)
 
 		var expectedOut string
