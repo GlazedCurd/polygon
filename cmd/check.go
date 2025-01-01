@@ -7,10 +7,12 @@ import (
 
 func init() {
 	rootCmd.AddCommand(checkCmd)
+	checkCmd.PersistentFlags().StringVarP(&filterPattern, "filter", "f", "", "regex pattern to filter test by name")
 }
 
 var (
-	checkCmd = &cobra.Command{
+	filterPattern string
+	checkCmd      = &cobra.Command{
 		Use:   "check",
 		Args:  cobra.MatchAll(cobra.MaximumNArgs(2)),
 		Short: "check solution",
@@ -39,7 +41,7 @@ func checkCmdBody(args []string) {
 		logger.Fatalf("Failed to initialize project:%s", err)
 	}
 
-	err = project.Check(solution, testsuit)
+	err = project.Check(solution, testsuit, filterPattern)
 	if err != nil {
 		logger.Fatalf("Failed to process check: %s", err)
 	}

@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 
 	"github.com/charmbracelet/log"
@@ -23,8 +24,10 @@ const (
 	LightSolutionName = "light"
 )
 
-func (pj *Project) Check(solution string, testsuite string) error {
+func (pj *Project) Check(solution string, testsuite string, filter string) error {
+
 	pj.logger.Debugf("starting check for solution \"%s\" with testsuit \"t%s\"", solution, testsuite)
+
 	var execConfig *ExecConfig
 
 	testsuiteDirName := testsuite + TestCasesDirectorySuffix
@@ -79,7 +82,20 @@ func (pj *Project) Check(solution string, testsuite string) error {
 
 	log.Debugf("found testcases: %s", testnames)
 
+	var filterRe *regexp.Regexp
+	if filter != "" {
+		filterRe, err = regexp.CompilePOSIX(filter)
+		if err != nil {
+			return fmt.Errorf("failed to compile filter pattern: %s", err)
+		}
+	}
+
 	for _, testname := range testnames {
+		if filterRe != nil && !filterRe.MatchString(testname) {
+			pj.logger.Debugf("Skip test \"%s\" by filter \"%s\" ", testname, filterRe.String())
+			continue
+		}
+
 		pj.logger.Infof("Processing test %s", coloredTestName(testname)) // TODO: add some color
 		inputfileName := path.Join(testsuiteDirName, testname+TestInputFileSuffix)
 		inpFile, err := os.Open(inputfileName)
