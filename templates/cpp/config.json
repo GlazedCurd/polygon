@@ -2,7 +2,7 @@
     "main":{
         "build_cmd":{
             "cmd":  "g++",
-            "args": "main.cpp -fsanitize=address,undefined -fno-sanitize-recover=all -std=c++17 -O2 -Wall -Werror -Wsign-compare -o debug.o"
+            "args": "main.cpp -fsanitize=address,undefined -fno-sanitize-recover=all -g -std=c++20 -O2 -Wall -Werror -Wsign-compare -o debug.o"
         },
         "run_cmd": {
             "cmd": "./debug.o"

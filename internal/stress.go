@@ -14,6 +14,7 @@ import (
 )
 
 const (
+	placeholder              = "polygon failed to run comand"
 	generatedCasesDirName    = "generated"
 	stressTestWorkers        = 10
 	casesDirFilesPermissions = 0777
@@ -184,6 +185,7 @@ func (pj *Project) runStressTestWithSeed(testSeed *caseDescription) error {
 
 	expected, errorLogRes, err := runner(&pj.cfg.Light.RunCmd, strings.NewReader(inputRunRes))
 	if err != nil {
+		pj.dumpTestCases(testSeed, inputRunRes, placeholder, expected, testLocalErrLog.String())
 		return fmt.Errorf("building expected result %w", err)
 	}
 
@@ -194,6 +196,7 @@ func (pj *Project) runStressTestWithSeed(testSeed *caseDescription) error {
 
 	actual, errorLogRes, err := runner(&pj.cfg.Main.RunCmd, strings.NewReader(inputRunRes))
 	if err != nil {
+		pj.dumpTestCases(testSeed, inputRunRes, actual, expected, testLocalErrLog.String())
 		return fmt.Errorf("building actual result %w", err)
 	}
 
