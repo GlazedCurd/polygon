@@ -141,7 +141,7 @@ func (pj *Project) dumpTestCases(testSeed *caseDescription, input string, output
 
 	resError = errors.Join(resError, err)
 
-	if strings.Trim(stderr, " \n\t") == "" {
+	if strings.Trim(stderr, " \n\t") != "" {
 		err = dumpFile(testname+TestDebugFileSuffix, stderr)
 		if err != nil {
 			log.Errorf("writing debug file %s", err)
@@ -162,25 +162,24 @@ func (pj *Project) runStressTestWithSeed(testSeed *caseDescription) error {
 	inp.Args = strings.ReplaceAll(inp.Args, seedPlaceholder, fmt.Sprint(testSeed.Seed))
 
 	runner := func(cmd *CommandCfg, input io.Reader) (string, string, error) {
-		var testLocalErrLog strings.Builder
+		var cmdErrLog strings.Builder
 		var cmdOutput strings.Builder
-		err := runCmd(cmd, input, &cmdOutput, &testLocalErrLog, pj.logger)
+		err := runCmd(cmd, input, &cmdOutput, &cmdErrLog, pj.logger)
 		if err != nil {
-			return "", testLocalErrLog.String(), fmt.Errorf("running test command %w", err)
+			return cmdOutput.String(), cmdErrLog.String(), fmt.Errorf("running test command %w", err)
 		}
-		return cmdOutput.String(), testLocalErrLog.String(), nil
+		return cmdOutput.String(), cmdErrLog.String(), nil
 	}
-
-	testLocalErrLog.WriteString("input stderr\n")
 
 	inputRunRes, errorLogRes, err := runner(&inp, nil)
-	if err != nil {
-		return fmt.Errorf("generating input %w", err)
+	if errorLogRes != "" {
+		testLocalErrLog.WriteString("input generation stderr:\n")
+		testLocalErrLog.WriteString(errorLogRes)
 	}
 
-	if errorLogRes != "" {
-		testLocalErrLog.WriteString("\n\n\n expect sol stderr:\n")
-		testLocalErrLog.WriteString(errorLogRes)
+	if err != nil {
+		pj.dumpTestCases(testSeed, inputRunRes, placeholder, placeholder, testLocalErrLog.String())
+		return fmt.Errorf("generating input %w", err)
 	}
 
 	expected, errorLogRes, err := runner(&pj.cfg.Light.RunCmd, strings.NewReader(inputRunRes))

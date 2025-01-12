@@ -1,8 +1,11 @@
 package internal
 
+import "time"
+
 type CommandCfg struct {
-	Cmd  string `mapstructure:"cmd" json:"cmd"`
-	Args string `mapstructure:"args" json:"args"`
+	Cmd     string        `mapstructure:"cmd" json:"cmd"`
+	Args    string        `mapstructure:"args" json:"args"`
+	Timeout time.Duration `mapstructure:"timeout" json:"timeout" default:"0"`
 }
 
 type ExecConfig struct {
